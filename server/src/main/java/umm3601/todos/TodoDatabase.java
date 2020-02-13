@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Map;
+import java.util.Arrays;
 
 import com.google.gson.Gson;
 
@@ -19,6 +20,17 @@ public class TodoDatabase {
 
   public int size() {
     return allTodos.length;
+  }
+
+  /**
+   * Get the single todo specified by the given ID. Return `null` if there is no
+   * todo with that ID.
+   *
+   * @param id the ID of the desired todo
+   * @return the todo with the given ID, or null if there is no todo with that ID
+   */
+  public Todo getTodo(String id) {
+    return Arrays.stream(allTodos).filter(x -> x._id.equals(id)).findFirst().orElse(null);
   }
 
   /**
