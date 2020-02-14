@@ -8,6 +8,7 @@ import java.util.Arrays;
 
 import com.google.gson.Gson;
 
+
 public class TodoDatabase {
 
   private Todo[] allTodos;
@@ -46,4 +47,5 @@ public class TodoDatabase {
 
     return filteredUsers;
   }
+
 }
