@@ -43,7 +43,19 @@ public class TodoDatabase {
   public Todo[] listTodos(Map<String, List<String>> queryParams) {
     Todo[] filteredUsers = allTodos;
 
-    //TODO: Add filters for query parameters here
+    //TODO: Add filters for query parameters here:
+
+
+    //Limit the size of the returned list
+    //Note: should always be the last filter
+    if(queryParams.containsKey("limit")) {
+      String limit = queryParams.get("limit").get(0);
+      Todo[] truncatedArray = Arrays.copyOf(filteredUsers, Integer.parseInt(limit));
+      for(int i = 0; i < truncatedArray.length; i++) {
+        truncatedArray[i] = filteredUsers[i];
+      }
+      filteredUsers = truncatedArray;
+    }
 
     return filteredUsers;
   }
