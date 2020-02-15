@@ -48,6 +48,8 @@ public class Server {
 
     // List users, filtered using query parameters
     server.get("api/users", ctx -> userController.getUsers(ctx));
+    //List of Todos
+    server.get("api/todos",ctx-> todoController.getTodos(ctx));
   }
 
   /***
