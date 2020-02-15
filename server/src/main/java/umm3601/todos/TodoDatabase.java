@@ -46,6 +46,13 @@ public class TodoDatabase {
     //TODO: Add filters for query parameters here:
 
 
+    //Order the list of todos by a given category
+    //Note: should always be the second to last filter
+    if(queryParams.containsKey("orderBy")) {
+      String category = queryParams.get("orderBy").get(0);
+      filteredUsers = sortByCategory(filteredUsers, category);
+    }
+
     //Limit the size of the returned list
     //Note: should always be the last filter
     if(queryParams.containsKey("limit")) {
@@ -60,4 +67,15 @@ public class TodoDatabase {
     return filteredUsers;
   }
 
+
+  /**
+   * Sort the array of todos alphabetically based on a given category
+   *
+   * @param todos the array of todos to be sorted
+   * @param category the category to sort by
+   * @return the sorted array of todos
+   */
+  private Todo[] sortByCategory(Todo[] todos, String categoryToSortBy) {
+    return Arrays.stream(todos).sorted((x1,x2) -> x1.category.compareTo(x2.category)).toArray(Todo[]::new);
+  }
 }
