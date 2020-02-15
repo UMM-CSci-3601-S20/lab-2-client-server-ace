@@ -8,7 +8,7 @@ function getAllTodos(){
   });
 }
 
-
+//gets todos from the api
 function getFilteredTodos() {
   console.log("Getting all the todos.");
 

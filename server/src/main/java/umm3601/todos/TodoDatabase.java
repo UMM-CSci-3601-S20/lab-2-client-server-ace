@@ -40,12 +40,42 @@ public class TodoDatabase {
    * @param queryParams map of key-value pairs for the query
    * @return an array of all the todos matching the given criteria
    */
+
   public Todo[] listTodos(Map<String, List<String>> queryParams) {
-    Todo[] filteredUsers = allTodos;
+    Todo[] filteredTodos = allTodos;
+
+    if (queryParams.containsKey("owner")) {
+      String ownerString = queryParams.get("owner").get(0);
+      filteredTodos = filterTodosByOwner(filteredTodos, ownerString);
+    }
+
+    if (queryParams.containsKey("category")){
+      String categoryString = queryParams.get("category").get(0);
+      filteredTodos = filterTodosByCategory(filteredTodos,categoryString);
+    }
+
+    if (queryParams.containsKey("contains")){
+      String bodyString = queryParams.get("contains").get(0);
+      filteredTodos = filterTodosByContains(filteredTodos,bodyString);
+    }
+
 
     //TODO: Add filters for query parameters here
 
-    return filteredUsers;
+    return filteredTodos;
+  }
+
+
+  public Todo[] filterTodosByOwner(Todo[] todos, String ownerString) {
+    return Arrays.stream(todos).filter(x -> x.owner.equals(ownerString)).toArray(Todo[]::new);
+  }
+
+  public Todo[] filterTodosByCategory(Todo[] todos, String categoryString) {
+    return Arrays.stream(todos).filter(x -> x.category.equals(categoryString)).toArray(Todo[]::new);
+  }
+
+  public Todo[] filterTodosByContains(Todo[] todos, String bodyString) {
+    return Arrays.stream(todos).filter(x -> x.body.equals(bodyString)).toArray(Todo[]::new);
   }
 
 }

@@ -62,7 +62,9 @@ public class Database {
         throw new BadRequestResponse("Specified age '" + ageParam + "' can't be parsed to an integer");
       }
     }
-    // Filter company if defined
+    // Filter company if definif (queryParams.containsKey("company")) {
+
+
     if (queryParams.containsKey("company")) {
       String targetCompany = queryParams.get("company").get(0);
       filteredUsers = filterUsersByCompany(filteredUsers, targetCompany);

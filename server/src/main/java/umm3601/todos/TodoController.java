@@ -3,6 +3,8 @@ package umm3601.todos;
 import io.javalin.http.Context;
 import io.javalin.http.NotFoundResponse;
 
+//added todo controller which will access the database
+
 public class TodoController {
 
   private TodoDatabase database;
