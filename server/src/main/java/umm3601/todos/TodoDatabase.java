@@ -2,11 +2,14 @@ package umm3601.todos;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.rmi.UnexpectedException;
 import java.util.List;
 import java.util.Map;
 import java.util.Arrays;
 
 import com.google.gson.Gson;
+
+import io.javalin.http.BadRequestResponse;
 
 
 public class TodoDatabase {
@@ -41,11 +44,25 @@ public class TodoDatabase {
    * @return an array of all the todos matching the given criteria
    */
   public Todo[] listTodos(Map<String, List<String>> queryParams) {
-    Todo[] filteredUsers = allTodos;
+    Todo[] filteredTodos = allTodos;
 
     //TODO: Add filters for query parameters here
-
-    return filteredUsers;
+    if(queryParams.containsKey("status")){
+      String targetStatus = queryParams.get("status").get(0);
+      boolean _targetStatus;
+      if(targetStatus.equals("complete")){
+        _targetStatus = true;
+      }
+      else{
+        _targetStatus = false;
+      }
+      filteredTodos = filterTodosByStatus(allTodos, _targetStatus);
+      }
+  
+    return filteredTodos;
   }
 
+  public Todo[] filterTodosByStatus(Todo[] todos, boolean targetStatus) {
+    return Arrays.stream(todos).filter(x -> x.status == targetStatus).toArray(Todo[]::new);
+  }
 }
