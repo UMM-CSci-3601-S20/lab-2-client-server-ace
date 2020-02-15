@@ -2,14 +2,14 @@ package umm3601.todos;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.rmi.UnexpectedException;
+//import java.rmi.UnexpectedException;
 import java.util.List;
 import java.util.Map;
 import java.util.Arrays;
 
 import com.google.gson.Gson;
 
-import io.javalin.http.BadRequestResponse;
+//import io.javalin.http.BadRequestResponse;
 
 
 public class TodoDatabase {
@@ -58,11 +58,19 @@ public class TodoDatabase {
       }
       filteredTodos = filterTodosByStatus(allTodos, _targetStatus);
       }
+
+    if (queryParams.containsKey("contains")){
+      String targetBody = queryParams.get("contains").get(0);
+      filteredTodos = filterTodosByContents(allTodos, targetBody);
+    }
   
     return filteredTodos;
   }
 
   public Todo[] filterTodosByStatus(Todo[] todos, boolean targetStatus) {
     return Arrays.stream(todos).filter(x -> x.status == targetStatus).toArray(Todo[]::new);
+  }
+  public Todo[] filterTodosByContents(Todo[] todos,String targetBody){
+    return Arrays.stream(todos).filter(x -> x.body.contains(targetBody)).toArray(Todo[]::new);
   }
 }
