@@ -56,12 +56,12 @@ public class TodoDatabase {
       else{
         _targetStatus = false;
       }
-      filteredTodos = filterTodosByStatus(allTodos, _targetStatus);
+      filteredTodos = filterTodosByStatus(filteredTodos, _targetStatus);
       }
 
     if (queryParams.containsKey("contains")){
       String targetBody = queryParams.get("contains").get(0);
-      filteredTodos = filterTodosByContents(allTodos, targetBody);
+      filteredTodos = filterTodosByContents(filteredTodos, targetBody);
     }
   
     return filteredTodos;

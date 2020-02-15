@@ -15,13 +15,6 @@ function getAllTodosByStatus() {
     document.getElementById('jsonDump').innerHTML = returned_json;
   });
 }
-function getAllTodosByContents(){
-  console.log("Getting all the todos by contents of the body.")
-
-  get("/api/todos?contains=" + document.getElementById("contains").value, function (returned_json){
-    document.getElementById('jsonDump').innerHTML = returned_json;
-  });
-}
 
 
 function getFilteredTodos() {
