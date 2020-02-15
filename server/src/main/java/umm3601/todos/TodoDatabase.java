@@ -49,7 +49,7 @@ public class TodoDatabase {
     //Order the list of todos by a given category
     //Note: should always be the second to last filter
     if(queryParams.containsKey("orderBy")) {
-      String category = queryParams.get("orderBy").get(0);
+      String category = queryParams.get("orderBy").get(0).toLowerCase();
       filteredUsers = sortByCategory(filteredUsers, category);
     }
 
@@ -76,6 +76,26 @@ public class TodoDatabase {
    * @return the sorted array of todos
    */
   private Todo[] sortByCategory(Todo[] todos, String categoryToSortBy) {
-    return Arrays.stream(todos).sorted((x1,x2) -> x1.category.compareTo(x2.category)).toArray(Todo[]::new);
+
+    switch(categoryToSortBy) {
+      //Sort by owner
+      case "owner":
+        return Arrays.stream(todos).sorted((x1,x2) -> x1.owner.compareTo(x2.owner)).toArray(Todo[]::new);
+
+      //Sort by status
+      case "status":
+        //TODO: Have way to convert status to string before implementing
+
+      //Sort by body
+      case "body":
+        return Arrays.stream(todos).sorted((x1,x2) -> x1.body.compareTo(x2.body)).toArray(Todo[]::new);
+
+      //Sort by category
+      case "category":
+        return Arrays.stream(todos).sorted((x1,x2) -> x1.category.compareTo(x2.category)).toArray(Todo[]::new);
+
+      default:
+        return todos;
+    }
   }
 }
