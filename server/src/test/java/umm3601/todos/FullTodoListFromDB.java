@@ -15,6 +15,7 @@ public class FullTodoListFromDB{
     int expectedLength = db.size();
     assertEquals(expectedLength, allTodos.length, "Incorrect total number of users");
   }
+  @Test
   public void firstTodoInFullList()throws IOException{
     TodoDatabase db = new TodoDatabase("/todos.json");
     Todo[] allTodos = db.listTodos(new HashMap<>());
