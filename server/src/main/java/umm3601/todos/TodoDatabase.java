@@ -70,6 +70,7 @@ public class TodoDatabase {
   public Todo[] filterTodosByStatus(Todo[] todos, boolean targetStatus) {
     return Arrays.stream(todos).filter(x -> x.status == targetStatus).toArray(Todo[]::new);
   }
+  
   public Todo[] filterTodosByContents(Todo[] todos,String targetBody){
     return Arrays.stream(todos).filter(x -> x.body.contains(targetBody)).toArray(Todo[]::new);
   }
