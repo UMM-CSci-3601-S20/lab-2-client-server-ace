@@ -54,10 +54,7 @@ public class TodoDatabase {
       filteredTodos = filterTodosByCategory(filteredTodos,categoryString);
     }
 
-    if (queryParams.containsKey("contains")){
-      String bodyString = queryParams.get("contains").get(0);
-      filteredTodos = filterTodosByContains(filteredTodos,bodyString);
-    }
+
 
 
     //TODO: Add filters for query parameters here
@@ -74,8 +71,6 @@ public class TodoDatabase {
     return Arrays.stream(todos).filter(x -> x.category.equals(categoryString)).toArray(Todo[]::new);
   }
 
-  public Todo[] filterTodosByContains(Todo[] todos, String bodyString) {
-    return Arrays.stream(todos).filter(x -> x.body.equals(bodyString)).toArray(Todo[]::new);
-  }
+
 
 }
