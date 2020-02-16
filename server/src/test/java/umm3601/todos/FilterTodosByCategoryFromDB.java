@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 
 public class FilterTodosByCategoryFromDB {
 
+//Defines the database to be used. Creates an array for all the todos as a hashmap
 
   @Test
   public void filterTodosByCategory() throws IOException {
@@ -31,6 +32,15 @@ public void firstTodoCategory() throws IOException {
   assertEquals(testCategory, actualCategory[0].category, "First category does not match");
 }
 
+//tests to see if the "homework" is the category of the third todo in the list of all todos
+@Test
+public void firstTodoCategory2() throws IOException {
+  TodoDatabase db = new TodoDatabase("/todos.json");
+  Todo[] allTodos = db.listTodos(new HashMap<>());
+  String testString = allTodos[2].category;
+  Todo[] actualCategory = db.filterTodosByCategory(allTodos, "homework");
+  assertEquals(testString, actualCategory[2].category, "Category doesn't match");
+}
 
 }
 

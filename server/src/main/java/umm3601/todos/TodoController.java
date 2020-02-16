@@ -3,7 +3,7 @@ package umm3601.todos;
 import io.javalin.http.Context;
 import io.javalin.http.NotFoundResponse;
 
-//added todo controller which will access the database
+//added todo controller which will access the TodoDatabase
 
 public class TodoController {
 
@@ -29,6 +29,7 @@ public class TodoController {
       throw new NotFoundResponse("No user with id " + id + " was found.");
     }
   }
+  //displays a list of todos in an array with the given context
   public void getTodos(Context ctx){
     Todo[] todos = database.listTodos(ctx.queryParamMap());
     ctx.json(todos);
