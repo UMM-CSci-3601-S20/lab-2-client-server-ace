@@ -66,11 +66,11 @@ public class TodoDatabase {
     //Note: should always be the last filter
       if(queryParams.containsKey("limit")) {
       String limit = queryParams.get("limit").get(0);
-      Todo[] truncatedArray = Arrays.copyOf(filteredUsers, Integer.parseInt(limit));
+      Todo[] truncatedArray = Arrays.copyOf(filteredTodos, Integer.parseInt(limit));
       for(int i = 0; i < truncatedArray.length; i++) {
-        truncatedArray[i] = filteredUsers[i];
+        truncatedArray[i] = filteredTodos[i];
       }
-      filteredUsers = truncatedArray;
+      filteredTodos = truncatedArray;
     }
   
     return filteredTodos;
