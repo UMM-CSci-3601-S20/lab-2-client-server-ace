@@ -10,10 +10,7 @@ import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
-/**
- * Tests umm3601.user.Database filterUsersByAge and listUsers with _age_ query
- * parameters
- */
+
 public class FilterTodosByOwnerFromDB {
 
 
@@ -33,6 +30,7 @@ public void firstTodoOwner() throws IOException {
   Todo[] actualOwner = db.filterTodosByOwner(allTodos, "Blanche");
   assertEquals(testOwner, actualOwner[0].owner, "First owner does not match");
 }
+
 
 }
 
