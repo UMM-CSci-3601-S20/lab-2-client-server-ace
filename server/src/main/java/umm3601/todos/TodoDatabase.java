@@ -52,7 +52,6 @@ public class TodoDatabase {
   public Todo[] listTodos(Map<String, List<String>> queryParams) {
     Todo[] filteredTodos = allTodos;
 
-    //TODO create test for owner filter
     if (queryParams.containsKey("owner")) {
       String ownerString = queryParams.get("owner").get(0);
       filteredTodos = filterTodosByOwner(filteredTodos, ownerString);
@@ -73,7 +72,6 @@ public class TodoDatabase {
       filteredTodos = filterTodosByContents(filteredTodos, targetBody);
     }
 
-    //TODO create test for category filter
     if (queryParams.containsKey("category")){
       String categoryString = queryParams.get("category").get(0);
       filteredTodos = filterTodosByCategory(filteredTodos,categoryString);
