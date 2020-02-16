@@ -22,7 +22,7 @@ public class FilterTodosByBodyContents{
         Todo[] allTodos = db.listTodos(new HashMap<>());
         String testString = "In sunt ex non tempor cillum commodo amet incididunt anim qui commodo quis. Cillum non labore ex sint esse.";
         Todo[] filteredTodos = db.filterTodosByContents(allTodos,testString);
-        assertEquals(1, filteredTodos.length, "There is more than one result when there shoulf be 0");
+        assertEquals(1, filteredTodos.length, "There is more than one result when there should be 0");
         assertEquals(allTodos[0].body,filteredTodos[0].body, "Wrong body message");
 
     }
