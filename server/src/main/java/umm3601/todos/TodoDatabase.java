@@ -2,11 +2,14 @@ package umm3601.todos;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+//import java.rmi.UnexpectedException;
 import java.util.List;
 import java.util.Map;
 import java.util.Arrays;
 
 import com.google.gson.Gson;
+
+//import io.javalin.http.BadRequestResponse;
 
 
 public class TodoDatabase {
@@ -41,10 +44,24 @@ public class TodoDatabase {
    * @return an array of all the todos matching the given criteria
    */
   public Todo[] listTodos(Map<String, List<String>> queryParams) {
-    Todo[] filteredUsers = allTodos;
+    Todo[] filteredTodos = allTodos;
 
-    //TODO: Add filters for query parameters here:
-
+    //TODO: Add filters for query parameters here
+    if(queryParams.containsKey("status")){
+      String targetStatus = queryParams.get("status").get(0);
+      boolean _targetStatus;
+      if(targetStatus.equals("complete")){
+        _targetStatus = true;
+      }
+      else{
+        _targetStatus = false;
+      }
+      filteredTodos = filterTodosByStatus(filteredTodos, _targetStatus);
+      }
+    if (queryParams.containsKey("contains")){
+      String targetBody = queryParams.get("contains").get(0);
+      filteredTodos = filterTodosByContents(filteredTodos, targetBody);
+    }
 
     //Order the list of todos by a given category
     //Note: should always be the second to last filter
@@ -55,16 +72,24 @@ public class TodoDatabase {
 
     //Limit the size of the returned list
     //Note: should always be the last filter
-    if(queryParams.containsKey("limit")) {
+      if(queryParams.containsKey("limit")) {
       String limit = queryParams.get("limit").get(0);
-      Todo[] truncatedArray = Arrays.copyOf(filteredUsers, Integer.parseInt(limit));
+      Todo[] truncatedArray = Arrays.copyOf(filteredTodos, Integer.parseInt(limit));
       for(int i = 0; i < truncatedArray.length; i++) {
-        truncatedArray[i] = filteredUsers[i];
+        truncatedArray[i] = filteredTodos[i];
       }
-      filteredUsers = truncatedArray;
+      filteredTodos = truncatedArray;
     }
+  
+    return filteredTodos;
+  }
 
-    return filteredUsers;
+  public Todo[] filterTodosByStatus(Todo[] todos, boolean targetStatus) {
+    return Arrays.stream(todos).filter(x -> x.status == targetStatus).toArray(Todo[]::new);
+  }
+  
+  public Todo[] filterTodosByContents(Todo[] todos,String targetBody){
+    return Arrays.stream(todos).filter(x -> x.body.contains(targetBody)).toArray(Todo[]::new);
   }
 
 
