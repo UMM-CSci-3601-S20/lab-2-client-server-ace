@@ -6,5 +6,13 @@ public class Todo{
   public boolean status;
   public String body;
   public String category;
+
+  public String statusAsString() {
+    if(status) {
+      return "complete";
+    } else {
+      return "incomplete";
+    }
+  }
 }
 

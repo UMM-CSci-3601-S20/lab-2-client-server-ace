@@ -67,7 +67,7 @@ public class TodoDatabase {
     //Note: should always be the second to last filter
     if(queryParams.containsKey("orderBy")) {
       String category = queryParams.get("orderBy").get(0).toLowerCase();
-      filteredUsers = sortByCategory(filteredUsers, category);
+      filteredTodos = sortByCategory(filteredTodos, category);
     }
 
     //Limit the size of the returned list
@@ -80,14 +80,14 @@ public class TodoDatabase {
       }
       filteredTodos = truncatedArray;
     }
-  
+
     return filteredTodos;
   }
 
   public Todo[] filterTodosByStatus(Todo[] todos, boolean targetStatus) {
     return Arrays.stream(todos).filter(x -> x.status == targetStatus).toArray(Todo[]::new);
   }
-  
+
   public Todo[] filterTodosByContents(Todo[] todos,String targetBody){
     return Arrays.stream(todos).filter(x -> x.body.contains(targetBody)).toArray(Todo[]::new);
   }
@@ -109,7 +109,7 @@ public class TodoDatabase {
 
       //Sort by status
       case "status":
-        //TODO: Have way to convert status to string before implementing
+        return Arrays.stream(todos).sorted((x1,x2) -> x1.statusAsString().compareTo(x2.statusAsString())).toArray(Todo[]::new);
 
       //Sort by body
       case "body":
