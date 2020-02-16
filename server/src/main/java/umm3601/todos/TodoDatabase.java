@@ -58,10 +58,19 @@ public class TodoDatabase {
       }
       filteredTodos = filterTodosByStatus(filteredTodos, _targetStatus);
       }
-
     if (queryParams.containsKey("contains")){
       String targetBody = queryParams.get("contains").get(0);
       filteredTodos = filterTodosByContents(filteredTodos, targetBody);
+    }
+      //Limit the size of the returned list
+    //Note: should always be the last filter
+      if(queryParams.containsKey("limit")) {
+      String limit = queryParams.get("limit").get(0);
+      Todo[] truncatedArray = Arrays.copyOf(filteredUsers, Integer.parseInt(limit));
+      for(int i = 0; i < truncatedArray.length; i++) {
+        truncatedArray[i] = filteredUsers[i];
+      }
+      filteredUsers = truncatedArray;
     }
   
     return filteredTodos;
