@@ -72,7 +72,7 @@ public class TodoDatabase {
 
     //Limit the size of the returned list
     //Note: should always be the last filter
-      if(queryParams.containsKey("limit")) {
+    if(queryParams.containsKey("limit")) {
       String limit = queryParams.get("limit").get(0);
       Todo[] truncatedArray = Arrays.copyOf(filteredTodos, Integer.parseInt(limit));
       for(int i = 0; i < truncatedArray.length; i++) {

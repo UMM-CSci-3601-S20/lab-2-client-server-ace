@@ -7,6 +7,7 @@ import io.javalin.core.validation.Validator;
 import io.javalin.http.NotFoundResponse;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.mockito.ArgumentCaptor;
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -40,6 +42,69 @@ public class TodoControllerSpec {
 
     db = new TodoDatabase(Server.TODO_DATA_FILE);
     todoController = new TodoController(db);
+  }
+
+  /**
+   * Test if the orderBy works correctly when ordering by status
+   */
+  @Test
+  public void testOrderBy() throws IOException {
+
+    String orderBy;
+
+    for(int i = 0; i < 5; i++) {
+      ctx.clearCookieStore();
+      Map<String, List<String>> queryParams = new HashMap<>();
+
+      switch(i){
+        case 0:
+          orderBy = "owner";
+          break;
+        case 1:
+          orderBy = "category";
+          break;
+        case 2:
+          orderBy = "status";
+          break;
+        case 3:
+          orderBy = "body";
+          break;
+        case 4:
+          orderBy = "none";
+          break;
+        default:
+          orderBy = "";
+          break;
+      }
+
+      queryParams.put("orderBy", Arrays.asList(new String[] { orderBy }));
+      when(ctx.queryParamMap()).thenReturn(queryParams);
+
+      todoController.getTodos(ctx);
+
+      ArgumentCaptor<Todo[]> argument = ArgumentCaptor.forClass(Todo[].class);
+      verify(ctx, times(i+1)).json(argument.capture());
+
+      switch(orderBy) {
+        case "owner":
+          assertEquals("Barry", argument.getValue()[0].owner);
+          break;
+        case "category":
+          assertEquals("groceries", argument.getValue()[0].category);
+          break;
+        case "status":
+          assertEquals(true, argument.getValue()[0].status);
+          break;
+        case "body":
+          assertEquals("Ad sint incididunt officia veniam incididunt. Voluptate exercitation eu aliqua laboris occaecat deserunt cupidatat velit nisi sunt mollit sint amet.", argument.getValue()[0].body);
+          break;
+        case "none":
+          assertEquals("58895985a22c04e761776d54", argument.getValue()[0]._id);
+          break;
+        default:
+          fail("Didn't order by any category on " + i + "th call");
+      }
+    }
   }
 
   /**
