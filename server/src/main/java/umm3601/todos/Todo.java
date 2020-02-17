@@ -7,4 +7,5 @@ public class Todo{
   public String body;
   public String category;
 }
+//defining the types necessary for each section of the webpage
 

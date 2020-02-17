@@ -63,6 +63,8 @@ public class Database {
       }
     }
     // Filter company if defined
+
+
     if (queryParams.containsKey("company")) {
       String targetCompany = queryParams.get("company").get(0);
       filteredUsers = filterUsersByCompany(filteredUsers, targetCompany);

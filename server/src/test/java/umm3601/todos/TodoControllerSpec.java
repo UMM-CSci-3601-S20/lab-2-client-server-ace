@@ -22,7 +22,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 /**
  * Tests the logic of the TodoController
@@ -64,6 +63,9 @@ public class TodoControllerSpec {
 
   }
 
+  /**
+   * Test filtering for todos with complete status
+   */
   @Test
   public void testStatusTrue() throws IOException{
     Map<String, List<String>> queryParams = new HashMap<>();
@@ -78,6 +80,10 @@ public class TodoControllerSpec {
       assertEquals(true, todo.status);
     }
   }
+
+  /**
+   * Test filtering for todos with incomplete status
+   */
   @Test
   public void testStatusFalse() throws IOException{
     Map<String, List<String>> queryParams = new HashMap<>();
@@ -92,8 +98,10 @@ public class TodoControllerSpec {
       assertEquals(false, todo.status);
     }
   }
+
+
   @Test
-  public void testContnentsNone(){
+  public void testContentsNone(){
     Map<String, List<String>> queryParams = new HashMap<>();
     queryParams.put("contains", Arrays.asList(new String[] { "This hopefully does not exist" }));
 
@@ -104,6 +112,43 @@ public class TodoControllerSpec {
     verify(ctx).json(argument.capture());
     assertEquals(0, argument.getValue().length);
   }
+
+  /**
+   * Tests filtering by owner
+   */
+  @Test
+  public void testOwnerFilter() throws IOException{
+    Map<String, List<String>> queryParams = new HashMap<>();
+    queryParams.put("owner", Arrays.asList(new String[] { "Fry" }));
+
+    when(ctx.queryParamMap()).thenReturn(queryParams);
+    todoController.getTodos(ctx);
+
+    ArgumentCaptor<Todo[]> argument = ArgumentCaptor.forClass(Todo[].class);
+    verify(ctx).json(argument.capture());
+    for (Todo todo : argument.getValue()) {
+      assertEquals("Fry", todo.owner);
+    }
+  }
+
+  /**
+   * Tests filtering by category
+   */
+  @Test
+  public void testCategoryFilter() throws IOException{
+    Map<String, List<String>> queryParams = new HashMap<>();
+    queryParams.put("category", Arrays.asList(new String[] { "video games" }));
+
+    when(ctx.queryParamMap()).thenReturn(queryParams);
+    todoController.getTodos(ctx);
+
+    ArgumentCaptor<Todo[]> argument = ArgumentCaptor.forClass(Todo[].class);
+    verify(ctx).json(argument.capture());
+    for (Todo todo : argument.getValue()) {
+      assertEquals("video games", todo.category);
+    }
+  }
+
   /**
    * Tests GET request with existent id
    */
