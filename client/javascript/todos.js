@@ -2,7 +2,7 @@
 // It adds the values of the various inputs to the requested URl to filter and order the returned todos.
 
 
-
+//gets todos from the api
 function getFilteredTodos() {
   console.log("Getting all the todos.");
 

@@ -7,6 +7,7 @@ import io.javalin.core.validation.Validator;
 import io.javalin.http.NotFoundResponse;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.mockito.ArgumentCaptor;
@@ -16,13 +17,13 @@ import org.junit.jupiter.api.Test;
 //import org.eclipse.jetty.util.IO;
 import org.junit.jupiter.api.Assertions;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 /**
  * Tests the logic of the TodoController
@@ -45,6 +46,69 @@ public class TodoControllerSpec {
   }
 
   /**
+   * Test if the orderBy works correctly when ordering by status
+   */
+  @Test
+  public void testOrderBy() throws IOException {
+
+    String orderBy;
+
+    for(int i = 0; i < 5; i++) {
+      ctx.clearCookieStore();
+      Map<String, List<String>> queryParams = new HashMap<>();
+
+      switch(i){
+        case 0:
+          orderBy = "owner";
+          break;
+        case 1:
+          orderBy = "category";
+          break;
+        case 2:
+          orderBy = "status";
+          break;
+        case 3:
+          orderBy = "body";
+          break;
+        case 4:
+          orderBy = "none";
+          break;
+        default:
+          orderBy = "";
+          break;
+      }
+
+      queryParams.put("orderBy", Arrays.asList(new String[] { orderBy }));
+      when(ctx.queryParamMap()).thenReturn(queryParams);
+
+      todoController.getTodos(ctx);
+
+      ArgumentCaptor<Todo[]> argument = ArgumentCaptor.forClass(Todo[].class);
+      verify(ctx, times(i+1)).json(argument.capture());
+
+      switch(orderBy) {
+        case "owner":
+          assertEquals("Barry", argument.getValue()[0].owner);
+          break;
+        case "category":
+          assertEquals("groceries", argument.getValue()[0].category);
+          break;
+        case "status":
+          assertEquals(true, argument.getValue()[0].status);
+          break;
+        case "body":
+          assertEquals("Ad sint incididunt officia veniam incididunt. Voluptate exercitation eu aliqua laboris occaecat deserunt cupidatat velit nisi sunt mollit sint amet.", argument.getValue()[0].body);
+          break;
+        case "none":
+          assertEquals("58895985a22c04e761776d54", argument.getValue()[0]._id);
+          break;
+        default:
+          fail("Didn't order by any category on " + i + "th call");
+      }
+    }
+  }
+
+  /**
    * Tests the limiting of the number of todos that are displayed
    */
   @Test
@@ -64,6 +128,9 @@ public class TodoControllerSpec {
 
   }
 
+  /**
+   * Test filtering for todos with complete status
+   */
   @Test
   public void testStatusTrue() throws IOException{
     Map<String, List<String>> queryParams = new HashMap<>();
@@ -78,6 +145,10 @@ public class TodoControllerSpec {
       assertEquals(true, todo.status);
     }
   }
+
+  /**
+   * Test filtering for todos with incomplete status
+   */
   @Test
   public void testStatusFalse() throws IOException{
     Map<String, List<String>> queryParams = new HashMap<>();
@@ -92,8 +163,10 @@ public class TodoControllerSpec {
       assertEquals(false, todo.status);
     }
   }
+
+
   @Test
-  public void testContnentsNone(){
+  public void testContentsNone(){
     Map<String, List<String>> queryParams = new HashMap<>();
     queryParams.put("contains", Arrays.asList(new String[] { "This hopefully does not exist" }));
 
@@ -104,6 +177,43 @@ public class TodoControllerSpec {
     verify(ctx).json(argument.capture());
     assertEquals(0, argument.getValue().length);
   }
+
+  /**
+   * Tests filtering by owner
+   */
+  @Test
+  public void testOwnerFilter() throws IOException{
+    Map<String, List<String>> queryParams = new HashMap<>();
+    queryParams.put("owner", Arrays.asList(new String[] { "Fry" }));
+
+    when(ctx.queryParamMap()).thenReturn(queryParams);
+    todoController.getTodos(ctx);
+
+    ArgumentCaptor<Todo[]> argument = ArgumentCaptor.forClass(Todo[].class);
+    verify(ctx).json(argument.capture());
+    for (Todo todo : argument.getValue()) {
+      assertEquals("Fry", todo.owner);
+    }
+  }
+
+  /**
+   * Tests filtering by category
+   */
+  @Test
+  public void testCategoryFilter() throws IOException{
+    Map<String, List<String>> queryParams = new HashMap<>();
+    queryParams.put("category", Arrays.asList(new String[] { "video games" }));
+
+    when(ctx.queryParamMap()).thenReturn(queryParams);
+    todoController.getTodos(ctx);
+
+    ArgumentCaptor<Todo[]> argument = ArgumentCaptor.forClass(Todo[].class);
+    verify(ctx).json(argument.capture());
+    for (Todo todo : argument.getValue()) {
+      assertEquals("video games", todo.category);
+    }
+  }
+
   /**
    * Tests GET request with existent id
    */
