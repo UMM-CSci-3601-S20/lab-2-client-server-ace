@@ -15,4 +15,5 @@ public class Todo{
     }
   }
 }
+//defining the types necessary for each section of the webpage
 

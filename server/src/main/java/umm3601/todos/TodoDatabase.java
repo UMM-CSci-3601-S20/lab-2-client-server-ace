@@ -14,6 +14,7 @@ import com.google.gson.Gson;
 
 public class TodoDatabase {
 
+//an array of all the todos
   private Todo[] allTodos;
 
   public TodoDatabase(String todoDataFile) throws IOException {
@@ -22,6 +23,7 @@ public class TodoDatabase {
     allTodos = gson.fromJson(reader, Todo[].class);
   }
 
+//returns the size of all todos (quantity) in the database
   public int size() {
     return allTodos.length;
   }
@@ -33,6 +35,8 @@ public class TodoDatabase {
    * @param id the ID of the desired todo
    * @return the todo with the given ID, or null if there is no todo with that ID
    */
+
+
   public Todo getTodo(String id) {
     return Arrays.stream(allTodos).filter(x -> x._id.equals(id)).findFirst().orElse(null);
   }
@@ -43,10 +47,15 @@ public class TodoDatabase {
    * @param queryParams map of key-value pairs for the query
    * @return an array of all the todos matching the given criteria
    */
+  //A query is a request for data or information from a database table or combination of tables
+
   public Todo[] listTodos(Map<String, List<String>> queryParams) {
     Todo[] filteredTodos = allTodos;
 
-    //TODO: Add filters for query parameters here
+    if (queryParams.containsKey("owner")) {
+      String ownerString = queryParams.get("owner").get(0);
+      filteredTodos = filterTodosByOwner(filteredTodos, ownerString);
+    }
     if(queryParams.containsKey("status")){
       String targetStatus = queryParams.get("status").get(0);
       boolean _targetStatus;
@@ -63,6 +72,11 @@ public class TodoDatabase {
       filteredTodos = filterTodosByContents(filteredTodos, targetBody);
     }
 
+    if (queryParams.containsKey("category")){
+      String categoryString = queryParams.get("category").get(0);
+      filteredTodos = filterTodosByCategory(filteredTodos,categoryString);
+    }
+
     //Order the list of todos by a given category
     //Note: should always be the second to last filter
     if(queryParams.containsKey("orderBy")) {
@@ -72,16 +86,29 @@ public class TodoDatabase {
 
     //Limit the size of the returned list
     //Note: should always be the last filter
-    if(queryParams.containsKey("limit")) {
-      String limit = queryParams.get("limit").get(0);
-      Todo[] truncatedArray = Arrays.copyOf(filteredTodos, Integer.parseInt(limit));
-      for(int i = 0; i < truncatedArray.length; i++) {
-        truncatedArray[i] = filteredTodos[i];
+      if(queryParams.containsKey("limit")) {
+      int limit = Integer.parseInt(queryParams.get("limit").get(0));
+      //TODO create test for limit > filteredTodos length
+      if(limit < filteredTodos.length) {
+        Todo[] truncatedArray = Arrays.copyOf(filteredTodos, limit);
+        for(int i = 0; i < truncatedArray.length; i++) {
+          truncatedArray[i] = filteredTodos[i];
+        }
+        filteredTodos = truncatedArray;
       }
-      filteredTodos = truncatedArray;
     }
 
     return filteredTodos;
+  }
+
+//filtering the todos by owner method
+  public Todo[] filterTodosByOwner(Todo[] todos, String ownerString) {
+    return Arrays.stream(todos).filter(x -> x.owner.equals(ownerString)).toArray(Todo[]::new);
+  }
+
+  //filtering the todos by category method
+  public Todo[] filterTodosByCategory(Todo[] todos, String categoryString) {
+    return Arrays.stream(todos).filter(x -> x.category.equals(categoryString)).toArray(Todo[]::new);
   }
 
   public Todo[] filterTodosByStatus(Todo[] todos, boolean targetStatus) {
