@@ -24,12 +24,21 @@ public class FilterTodosByCategoryFromDB {
 }
 
 @Test
-public void firstTodoCategory() throws IOException {
+public void firstTodoCategory3() throws IOException {
   TodoDatabase db = new TodoDatabase("/todos.json");
   Todo[] allTodos = db.listTodos(new HashMap<>());
   String testCategory = allTodos[0].category;
   Todo[] actualCategory = db.filterTodosByCategory(allTodos, "software design");
   assertEquals(testCategory, actualCategory[0].category, "First category does not match");
+}
+
+@Test
+public void firstTodoCategory() throws IOException {
+  TodoDatabase db = new TodoDatabase("/todos.json");
+  Todo[] allTodos = db.listTodos(new HashMap<>());
+  String testCategory = allTodos[4].category;
+  Todo[] actualCategory = db.filterTodosByCategory(allTodos, "groceries");
+  assertEquals(testCategory, actualCategory[4].category, "First category does not match");
 }
 
 //tests to see if the "homework" is the category of the third todo in the list of all todos
