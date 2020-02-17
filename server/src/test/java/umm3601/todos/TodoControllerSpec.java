@@ -9,12 +9,19 @@ import io.javalin.http.NotFoundResponse;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import org.mockito.ArgumentCaptor;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+//import org.eclipse.jetty.util.IO;
 import org.junit.jupiter.api.Assertions;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Tests the logic of the TodoController
@@ -34,6 +41,112 @@ public class TodoControllerSpec {
 
     db = new TodoDatabase(Server.TODO_DATA_FILE);
     todoController = new TodoController(db);
+  }
+
+  /**
+   * Tests the limiting of the number of todos that are displayed
+   */
+  @Test
+  public void testLimit() throws IOException {
+    int randomLimit = (int) (Math.random() * 100) + 1;
+    String limitAsString = Integer.toString(randomLimit);
+
+    Map<String, List<String>> queryParams = new HashMap<>();
+    queryParams.put("limit", Arrays.asList(new String[] { limitAsString }));
+    when(ctx.queryParamMap()).thenReturn(queryParams);
+
+    todoController.getTodos(ctx);
+
+    ArgumentCaptor<Todo[]> argument = ArgumentCaptor.forClass(Todo[].class);
+    verify(ctx).json(argument.capture());
+    assertEquals(randomLimit, argument.getValue().length);
+
+  }
+
+  /**
+   * Test filtering for todos with complete status
+   */
+  @Test
+  public void testStatusTrue() throws IOException{
+    Map<String, List<String>> queryParams = new HashMap<>();
+    queryParams.put("status", Arrays.asList(new String[] { "complete" }));
+
+    when(ctx.queryParamMap()).thenReturn(queryParams);
+    todoController.getTodos(ctx);
+
+    ArgumentCaptor<Todo[]> argument = ArgumentCaptor.forClass(Todo[].class);
+    verify(ctx).json(argument.capture());
+    for (Todo todo : argument.getValue()) {
+      assertEquals(true, todo.status);
+    }
+  }
+
+  /**
+   * Test filtering for todos with incomplete status
+   */
+  @Test
+  public void testStatusFalse() throws IOException{
+    Map<String, List<String>> queryParams = new HashMap<>();
+    queryParams.put("status", Arrays.asList(new String[] { "incomplete" }));
+
+    when(ctx.queryParamMap()).thenReturn(queryParams);
+    todoController.getTodos(ctx);
+
+    ArgumentCaptor<Todo[]> argument = ArgumentCaptor.forClass(Todo[].class);
+    verify(ctx).json(argument.capture());
+    for (Todo todo : argument.getValue()) {
+      assertEquals(false, todo.status);
+    }
+  }
+
+
+  @Test
+  public void testContentsNone(){
+    Map<String, List<String>> queryParams = new HashMap<>();
+    queryParams.put("contains", Arrays.asList(new String[] { "This hopefully does not exist" }));
+
+    when(ctx.queryParamMap()).thenReturn(queryParams);
+    todoController.getTodos(ctx);
+
+    ArgumentCaptor<Todo[]> argument = ArgumentCaptor.forClass(Todo[].class);
+    verify(ctx).json(argument.capture());
+    assertEquals(0, argument.getValue().length);
+  }
+
+  /**
+   * Tests filtering by owner
+   */
+  @Test
+  public void testOwnerFilter() throws IOException{
+    Map<String, List<String>> queryParams = new HashMap<>();
+    queryParams.put("owner", Arrays.asList(new String[] { "Fry" }));
+
+    when(ctx.queryParamMap()).thenReturn(queryParams);
+    todoController.getTodos(ctx);
+
+    ArgumentCaptor<Todo[]> argument = ArgumentCaptor.forClass(Todo[].class);
+    verify(ctx).json(argument.capture());
+    for (Todo todo : argument.getValue()) {
+      assertEquals("Fry", todo.owner);
+    }
+  }
+
+  /**
+   * Tests filtering by category
+   */
+  @Test
+  public void testCategoryFilter() throws IOException{
+    Map<String, List<String>> queryParams = new HashMap<>();
+    queryParams.put("category", Arrays.asList(new String[] { "video games" }));
+
+    when(ctx.queryParamMap()).thenReturn(queryParams);
+    todoController.getTodos(ctx);
+
+    ArgumentCaptor<Todo[]> argument = ArgumentCaptor.forClass(Todo[].class);
+    verify(ctx).json(argument.capture());
+    for (Todo todo : argument.getValue()) {
+      assertEquals("video games", todo.category);
+    }
   }
 
   /**

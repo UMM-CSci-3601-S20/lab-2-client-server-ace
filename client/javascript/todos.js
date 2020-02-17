@@ -1,12 +1,6 @@
 // gets todos from the api.
 // It adds the values of the various inputs to the requested URl to filter and order the returned todos.
-function getAllTodos(){
-  console.log("Getting all the users.");
 
-  get("/api/todos", function (returned_json) {
-    document.getElementById('jsonDump').innerHTML = returned_json;
-  });
-}
 
 //gets todos from the api
 function getFilteredTodos() {
