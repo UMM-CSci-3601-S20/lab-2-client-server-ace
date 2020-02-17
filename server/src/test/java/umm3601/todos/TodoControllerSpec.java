@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 /**
  * Tests the logic of the TodoController
  *
@@ -213,7 +214,39 @@ public class TodoControllerSpec {
       assertEquals("video games", todo.category);
     }
   }
+  /**
+   * Tests arbritrary combination of filters
+   */
 
+  @Test
+  public void filterCombinations()throws IOException{
+    Map<String, List<String>> queryParams = new HashMap<>();
+    queryParams.put("category", Arrays.asList(new String[] { "homework" }));
+    queryParams.put("owner",Arrays.asList(new String[] { "Fry" }));
+    queryParams.put("status",Arrays.asList(new String[] { "complete" }));
+    queryParams.put("limit",Arrays.asList(new String[] { "10" }));
+    queryParams.put("orderBy",Arrays.asList(new String[] { "body" }));
+
+    when(ctx.queryParamMap()).thenReturn(queryParams);
+    todoController.getTodos(ctx);
+
+    ArgumentCaptor<Todo[]> argument = ArgumentCaptor.forClass(Todo[].class);
+    verify(ctx).json(argument.capture());
+    
+    String firstInList = "Consectetur adipisicing pariatur sint magna do velit nisi. Sit do exercitation exercitation quis esse quis.";
+    int iteration = 0;
+    for(Todo todo : argument.getValue()){
+      if(iteration == 0){
+        assertEquals(firstInList, todo.body);
+      }
+      assertEquals("Fry", todo.owner);
+      assertEquals(true, todo.status);
+      assertEquals("homework", todo.category);
+      iteration++;
+    }
+    boolean limitResult = 10 >= iteration;
+    assertEquals(true, limitResult);
+  }
   /**
    * Tests GET request with existent id
    */
@@ -232,3 +265,7 @@ public class TodoControllerSpec {
     });
   }
 }
+
+
+
+
