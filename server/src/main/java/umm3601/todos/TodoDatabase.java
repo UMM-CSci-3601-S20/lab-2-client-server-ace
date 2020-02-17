@@ -77,6 +77,13 @@ public class TodoDatabase {
       filteredTodos = filterTodosByCategory(filteredTodos,categoryString);
     }
 
+    //Order the list of todos by a given category
+    //Note: should always be the second to last filter
+    if(queryParams.containsKey("orderBy")) {
+      String category = queryParams.get("orderBy").get(0).toLowerCase();
+      filteredTodos = sortByCategory(filteredTodos, category);
+    }
+
     //Limit the size of the returned list
     //Note: should always be the last filter
       if(queryParams.containsKey("limit")) {
@@ -110,5 +117,37 @@ public class TodoDatabase {
 
   public Todo[] filterTodosByContents(Todo[] todos,String targetBody){
     return Arrays.stream(todos).filter(x -> x.body.contains(targetBody)).toArray(Todo[]::new);
+  }
+
+
+  /**
+   * Sort the array of todos alphabetically based on a given category
+   *
+   * @param todos the array of todos to be sorted
+   * @param categoryToSortBy the category to sort by
+   * @return the sorted array of todos
+   */
+  private Todo[] sortByCategory(Todo[] todos, String categoryToSortBy) {
+
+    switch(categoryToSortBy) {
+      //Sort by owner
+      case "owner":
+        return Arrays.stream(todos).sorted((x1,x2) -> x1.owner.compareTo(x2.owner)).toArray(Todo[]::new);
+
+      //Sort by status
+      case "status":
+        return Arrays.stream(todos).sorted((x1,x2) -> x1.statusAsString().compareTo(x2.statusAsString())).toArray(Todo[]::new);
+
+      //Sort by body
+      case "body":
+        return Arrays.stream(todos).sorted((x1,x2) -> x1.body.compareTo(x2.body)).toArray(Todo[]::new);
+
+      //Sort by category
+      case "category":
+        return Arrays.stream(todos).sorted((x1,x2) -> x1.category.compareTo(x2.category)).toArray(Todo[]::new);
+
+      default:
+        return todos;
+    }
   }
 }
