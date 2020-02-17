@@ -97,7 +97,7 @@ public class TodoDatabase {
    * Sort the array of todos alphabetically based on a given category
    *
    * @param todos the array of todos to be sorted
-   * @param category the category to sort by
+   * @param categoryToSortBy the category to sort by
    * @return the sorted array of todos
    */
   private Todo[] sortByCategory(Todo[] todos, String categoryToSortBy) {
